@@ -1,7 +1,8 @@
 {
     "nav": {
         "home": "Home",
-        "singleMenuItem": "Single menu item",
+        "name_tag": "Name Tag",
+        "invoice": "Invoice",
         "collapseMenu": {
             "collapseMenu": "Collapse menu item",
             "item1": "Collapse menu item 1",

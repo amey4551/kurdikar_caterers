@@ -13,10 +13,11 @@
     "format": "npm run prettier:fix && npm run lint:fix"
   },
   "dependencies": {
-    "@fullcalendar/daygrid": "^6.1.8",
-    "@fullcalendar/interaction": "^6.1.8",
-    "@fullcalendar/react": "^6.1.8",
-    "@fullcalendar/timegrid": "^6.1.8",
+    "@fullcalendar/core": "^6.1.15",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/react": "^6.1.15",
+    "@fullcalendar/timegrid": "^6.1.15",
     "@popperjs/core": "^2.11.8",
     "@reduxjs/toolkit": "^1.9.3",
     "@tanstack/match-sorter-utils": "^8.8.4",
@@ -31,6 +32,7 @@
     "history": "^5.3.0",
     "html-react-parser": "^3.0.15",
     "i18next": "^22.4.13",
+    "jspdf": "^2.5.1",
     "lodash": "^4.17.21",
     "miragejs": "^0.1.47",
     "react": "^18.2.0",

@@ -1,0 +1,72 @@
+.custom-input .input {
+    @apply border 
+        border-gray-300 
+        dark:border-gray-600 
+        dark:bg-transparent 
+        rounded-[.25rem] 
+        w-full 
+        py-1 px-2 
+        focus:outline-none 
+        focus:ring-1 
+        focus-within:ring-1 
+        appearance-none 
+        transition 
+        duration-150 
+        dark:text-gray-100 
+        ease-in-out 
+        !h-8 
+        font-medium 
+        text-black 
+        text-[.90rem];
+
+    &::placeholder {
+        @apply text-gray-400;
+    }
+
+    &.input-invalid {
+        @apply ring-1 ring-red-500 border-red-500;
+    }
+
+    &.input-lg {
+        @apply text-lg
+    }
+}
+
+.custom-input .input-addon {
+    @apply flex items-center px-3 rounded-md border border-gray-300 bg-gray-50 dark:border-gray-600 dark:bg-gray-700;
+}
+
+.custom-input .input-textarea {
+    min-height: 7rem;
+}
+
+.custom-input .input-wrapper {
+    @apply relative w-full flex;
+}
+
+.custom-input .input-disabled {
+    @apply bg-gray-100 
+        dark:bg-gray-700
+        text-gray-400 
+        cursor-not-allowed;
+
+    &::placeholder {
+        @apply opacity-70;
+    }
+}
+
+.custom-input .input-suffix-start {
+    @apply absolute top-2/4 transform -translate-y-2/4 ltr:left-2.5 rtl:right-2.5;
+}
+
+.custom-input .input-suffix-end {
+    @apply absolute top-2/4 transform -translate-y-2/4 ltr:right-2.5 rtl:left-2.5 flex;
+}
+
+.PhoneInputCountry{
+    @apply gap-1;
+}
+
+.date-invalid input {
+    @apply ring-1 ring-red-500 !border-red-500 outline-none focus:!border-teal-500;
+  }

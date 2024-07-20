@@ -8,7 +8,7 @@ import { supabase } from '@/backend/supabaseClient'; // Adjust the path as neede
 function Events() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,14 +20,13 @@ function Events() {
 
         if (error) throw error;
 
-        // Transform data to FullCalendar format
         const formattedEvents = data.map(order => ({
           id: order.id,
           title: `${order.client_name} - ${order.order_occasion} - ${order.people_count} people`,
           date: order.order_date,
         }));
 
-        setEvents(formattedEvents);
+        setEvents(formattedEvents as any);
       } catch (error) {
         setError('Failed to fetch events.');
         console.error('Error fetching events:', error);
@@ -39,7 +38,7 @@ function Events() {
     fetchOrders();
   }, []);
 
-  const handleEventClick = (clickInfo) => {
+  const handleEventClick = (clickInfo : any) => {
     const orderId = clickInfo.event.id;
     navigate(`/order/${orderId}`);
   };

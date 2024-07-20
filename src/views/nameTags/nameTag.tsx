@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+ import React, { useState } from 'react';
 import { jsPDF } from 'jspdf';
 import { menu } from '@/configs/app.config';
 
@@ -66,7 +66,7 @@ const NameTag = () => {
   };
 
   // Function to calculate maximum font size that fits within the item dimensions
-  function getFontSize(maxWidth, maxHeight) {
+  function getFontSize(maxWidth : number, maxHeight : number) {
     const baseWidth = 120;
     const baseHeight = 60;
     const baseFontSize = 25;
@@ -77,7 +77,7 @@ const NameTag = () => {
     return Math.min(fontSizeForWidth, fontSizeForHeight);
   }
 
-  const getMaxFontSize = (doc, text, maxWidth, maxHeight) => {
+  const getMaxFontSize = (doc : any, text :string, maxWidth : number, maxHeight :number) => {
     const finalFontSize = getFontSize(maxWidth, maxHeight);
     return finalFontSize;
   };
@@ -91,7 +91,7 @@ const NameTag = () => {
   ];
 
   // Function to handle preset size selection
-  const handlePresetSizeChange = (index) => {
+  const handlePresetSizeChange = (index : number) => {
     const selectedSize = presetSizes[index];
     setItemWidth(selectedSize.width);
     setItemHeight(selectedSize.height);

@@ -5507,6 +5507,11 @@ svgo@^2.7.0:
     picocolors "^1.0.0"
     stable "^0.1.8"
 
+swiper@^11.1.5:
+  version "11.1.5"
+  resolved "https://registry.npmjs.org/swiper/-/swiper-11.1.5.tgz"
+  integrity sha512-JJQWFXdxiMGC2j6ZGTYat5Z7NN9JORJBgHp0/joX9uPod+cRj0wr5H5VnWSNIz9JeAamQvYKaG7aFrGHIF9OEg==
+
 synckit@^0.8.5:
   version "0.8.5"
   resolved "https://registry.npmjs.org/synckit/-/synckit-0.8.5.tgz"

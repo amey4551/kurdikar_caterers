@@ -58,6 +58,7 @@
     "react-time-picker": "^7.0.0",
     "react-tooltip": "^5.11.1",
     "redux-persist": "^6.0.0",
+    "swiper": "^11.1.5",
     "twin.macro": "^3.3.0",
     "yup": "^1.1.1"
   },

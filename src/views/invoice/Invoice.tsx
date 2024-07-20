@@ -17,7 +17,7 @@ const Invoice = () => {
   });
 
   const generatePDF = () => {
-    const doc = new jsPDF();
+    const doc : any = new jsPDF();
 
     // Extract data from state
     const { number_of_people, order_location, client_name, per_plate_cost, event_date, bill_date, food_items } = invoiceData;

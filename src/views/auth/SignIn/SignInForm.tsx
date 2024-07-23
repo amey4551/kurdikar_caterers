@@ -5,10 +5,14 @@ import Alert from '@/components/ui/Alert'
 import PasswordInput from '@/components/shared/PasswordInput'
 import ActionLink from '@/components/shared/ActionLink'
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
-import useAuth from '@/utils/hooks/useAuth'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import type { CommonProps } from '@/@types/common'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '@/backend/supabaseClient'
+import { setUser, signInSuccess, useAppDispatch } from '@/store'
+import useQuery from '@/utils/hooks/useQuery'
+import appConfig from '@/configs/app.config'
 
 interface SignInFormProps extends CommonProps {
     disableSubmit?: boolean
@@ -37,8 +41,9 @@ const SignInForm = (props: SignInFormProps) => {
     } = props
 
     const [message, setMessage] = useTimeOutMessage()
-
-    const { signIn } = useAuth()
+    const dispatch = useAppDispatch()
+    const navigate = useNavigate()
+    const query = useQuery()
 
     const onSignIn = async (
         values: SignInFormSchema,
@@ -47,10 +52,37 @@ const SignInForm = (props: SignInFormProps) => {
         const { userName, password } = values
         setSubmitting(true)
 
-        const result = await signIn({ userName, password })
+        try {
+            const { data: { session }, error } = await supabase.auth.signInWithPassword({
+                email: userName,
+                password,
+            })
 
-        if (result?.status === 'failed') {
-            setMessage(result.message)
+            if (error) {
+                throw error
+            }
+
+            if (session) {
+                const token = session.access_token
+
+                if (token) {
+                    dispatch(signInSuccess(token))
+                    dispatch(
+                        setUser({
+                            userName: userName,
+                            email: userName, // Assuming email is same as userName here; adjust if needed
+                            avatar: '', // Set this if you have user avatar URL
+                            authority: ['USER'],
+                        })
+                    )
+                }
+
+                const redirectUrl = query.get('redirect_url') || appConfig.authenticatedEntryPath
+                navigate(redirectUrl)
+                setMessage('Sign-in successful!')
+            }
+        } catch (error: any) {
+            setMessage(error.message || 'An error occurred')
         }
 
         setSubmitting(false)
@@ -60,14 +92,14 @@ const SignInForm = (props: SignInFormProps) => {
         <div className={className}>
             {message && (
                 <Alert showIcon className="mb-4" type="danger">
-                    <>{message}</>
+                    {message}
                 </Alert>
             )}
             <Formik
                 initialValues={{
-                    userName: 'admin',
-                    password: '123Qwe',
-                    rememberMe: true,
+                    userName: '',
+                    password: '',
+                    rememberMe: false,
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values, { setSubmitting }) => {
@@ -83,10 +115,7 @@ const SignInForm = (props: SignInFormProps) => {
                         <FormContainer>
                             <FormItem
                                 label="User Name"
-                                invalid={
-                                    (errors.userName &&
-                                        touched.userName) as boolean
-                                }
+                                invalid={errors.userName && touched.userName}
                                 errorMessage={errors.userName}
                             >
                                 <Field
@@ -99,10 +128,7 @@ const SignInForm = (props: SignInFormProps) => {
                             </FormItem>
                             <FormItem
                                 label="Password"
-                                invalid={
-                                    (errors.password &&
-                                        touched.password) as boolean
-                                }
+                                invalid={errors.password && touched.password}
                                 errorMessage={errors.password}
                             >
                                 <Field
@@ -121,7 +147,7 @@ const SignInForm = (props: SignInFormProps) => {
                                 {isSubmitting ? 'Signing in...' : 'Sign In'}
                             </Button>
                             <div className="mt-4 text-center">
-                                <span>{`Don't have an account yet?`} </span>
+                                <span>{`Don't have an account yet? `}</span>
                                 <ActionLink to={signUpUrl}>Sign up</ActionLink>
                             </div>
                         </FormContainer>

@@ -13,6 +13,9 @@
     "format": "npm run prettier:fix && npm run lint:fix"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
@@ -60,6 +63,7 @@
     "react-tooltip": "^5.11.1",
     "redux-persist": "^6.0.0",
     "swiper": "^11.1.5",
+    "tailwind-scrollbar": "^3.1.0",
     "twin.macro": "^3.3.0",
     "yup": "^1.1.1"
   },

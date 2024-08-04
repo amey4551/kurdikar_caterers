@@ -6,13 +6,19 @@ import { supabase } from '@/backend/supabaseClient';
 
 const foodCategories = ['Rice', 'Gravy', 'Bhaji', 'Dessert'];
 
-const FoodItem = () => {
-    const [selectedItems, setSelectedItems] = useState([]);
-    const [activeCategory, setActiveCategory] = useState(foodCategories[0]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [foodItems, setFoodItems] = useState([]);
+type FoodItemType = {
+    id: number;
+    item_name: string;
+    category: string;
+};
 
-    const toggleItem = (event, item) => {
+const FoodItem: React.FC = () => {
+    const [selectedItems, setSelectedItems] = useState<FoodItemType[]>([]);
+    const [activeCategory, setActiveCategory] = useState<string>(foodCategories[0]);
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [foodItems, setFoodItems] = useState<FoodItemType[]>([]);
+
+    const toggleItem = (event: React.MouseEvent<HTMLDivElement>, item: FoodItemType) => {
         event.preventDefault();
         setSelectedItems((prev) =>
             prev.includes(item)
@@ -24,25 +30,23 @@ const FoodItem = () => {
     const fetchFoodItems = async () => {
         const { data, error } = await supabase
             .from('food_item_data')
-            .select('*'); // Adjust the select statement as needed
+            .select('*');
 
         if (error) {
             console.error('Error fetching food items:', error);
         } else {
-            setFoodItems(data); // Set the fetched data into state
+            setFoodItems(data as FoodItemType[]);
         }
     };
 
     useEffect(() => {
-        fetchFoodItems(); // Call the function on component mount
+        fetchFoodItems();
     }, []);
 
-    // Filter items based on the search term
     const filteredItems = foodItems.filter(item =>
         item.item_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Sort items to show selected ones at the top
     const sortedItems = [
         ...filteredItems.filter(item => selectedItems.includes(item)),
         ...filteredItems.filter(item => !selectedItems.includes(item)),
@@ -65,7 +69,6 @@ const FoodItem = () => {
                     </div>
                 </div>
 
-                {/* Food Categories */}
                 <div className="flex mb-8 space-x-4 overflow-x-auto pb-2">
                     {foodCategories.map((category, index) => (
                         <motion.button
@@ -84,7 +87,6 @@ const FoodItem = () => {
                     ))}
                 </div>
 
-                {/* Food Items */}
                 <div className="flex flex-col space-y-4 h-4/6 overflow-y-auto scrollbar-thin scrollbar-thumb-scrollbar-thumb scrollbar-track-scrollbar-track">
                     {sortedItems.map((item, index) => (
                         <motion.div
@@ -115,7 +117,6 @@ const FoodItem = () => {
                 </div>
             </div>
 
-            {/* Selected Items Preview */}
             <div className="w-1/4 bg-white p-6 shadow-lg">
                 <h2 className="text-2xl font-bold mb-4 text-gray-800">Selected Items</h2>
                 {selectedItems.length === 0 ? (

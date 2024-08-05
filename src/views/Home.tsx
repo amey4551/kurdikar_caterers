@@ -1,5 +1,9 @@
+import ManageOrders from "./manageOrders/ManageOrders"
+
 const Home = () => {
-    return <div>Home</div>
+    return <div>
+      <ManageOrders/>
+    </div>
 }
 
 export default Home

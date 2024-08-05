@@ -36,26 +36,6 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [],
     },
-    {
-        key: 'nameTag',
-        path: '/name_tag',
-        title: 'Home',
-        translateKey: 'nav.name_tag',
-        icon: 'home',
-        type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
-        subMenu: [],
-    },
-    {
-        key: 'invoice',
-        path: '/invoice',
-        title: 'Invoice',
-        translateKey: 'invoice',
-        icon: 'singleMenu',
-        type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
-        subMenu: [],
-    },
    
 ]
 

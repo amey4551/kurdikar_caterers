@@ -4,6 +4,13 @@ export type FoodItemType = {
     category: string;
 };
 
+export type FoodItemTypeMenu = {
+    id: number;
+    item_name: string;
+    category: string;
+    food_item_name:string
+};
+
 export type FoodItemProps = {
     selectedItems: FoodItemType[];
     setSelectedItems: React.Dispatch<React.SetStateAction<FoodItemType[]>>;

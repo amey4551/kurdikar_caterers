@@ -39,8 +39,9 @@ function Events() {
   }, []);
 
   const handleEventClick = (clickInfo : any) => {
+    console.log('kkkkk',clickInfo);
     const orderId = clickInfo.event.id;
-    navigate(`/order/${orderId}`);
+    navigate(`/home/${orderId}`);
   };
 
   if (loading) return <div>Loading...</div>;

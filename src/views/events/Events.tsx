@@ -39,7 +39,6 @@ function Events() {
   }, []);
 
   const handleEventClick = (clickInfo : any) => {
-    console.log('kkkkk',clickInfo);
     const orderId = clickInfo.event.id;
     navigate(`/home/${orderId}`);
   };

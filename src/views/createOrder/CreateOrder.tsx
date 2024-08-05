@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FormItem, FormContainer } from '@/components/ui/Form';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
@@ -12,20 +12,8 @@ import { Card } from '@/components/ui';
 import { supabase } from '@/backend/supabaseClient';
 import { FieldProps } from 'formik';
 import FoodItem from './FoodItem';
+import { FoodItemType, FormModel, Option } from '@/@types/createOrder.type';
 
-type Option = {
-    value: string;
-    label: string;
-};
-
-type FormModel = {
-    order_date: Date | null;
-    order_time: string;
-    order_location: string;
-    client_name: string;
-    people_count: number;
-    order_occasion: string;
-};
 
 const occasionOptions: Option[] = [
     { value: 'birthday', label: 'Birthday' },
@@ -50,8 +38,9 @@ const validationSchema = Yup.object().shape({
     order_occasion: Yup.string().required('Please select an occasion!'),
 });
 
-const submitForm = async (values: FormModel, { setSubmitting, resetForm }: FormikHelpers<FormModel>) => {
-    const { data, error } = await supabase
+const submitForm = async (values: FormModel, selectedItems: FoodItemType[], { setSubmitting, resetForm }: FormikHelpers<FormModel>) => {
+    // Insert into order_datetime_details and get the generated id
+    const { data: orderData, error: orderError } = await supabase
         .from('order_datetime_details')
         .insert([{
             order_date: values.order_date,
@@ -60,20 +49,43 @@ const submitForm = async (values: FormModel, { setSubmitting, resetForm }: Formi
             client_name: values.client_name,
             people_count: values.people_count,
             order_occasion: values.order_occasion,
-        }]);
+        }])
+        .select('id')
+        .single();
 
-    if (error) {
-        console.error('Error inserting data:', error);
-        alert('An error occurred while submitting the form.');
+    if (orderError) {
+        alert('An error occurred while submitting the order details.');
+        setSubmitting(false);
+        return;
+    }
+
+    const orderId = orderData.id;
+
+    // Insert into order_food_items for each selected food item
+    const foodItemsToInsert = selectedItems.map(item => ({
+        order_id: orderId,
+        food_item_id: item.id,
+        food_item_name: item.item_name,
+    }));
+
+    const { error: foodItemsError } = await supabase
+        .from('order_food_items')
+        .insert(foodItemsToInsert);
+
+    if (foodItemsError) {
+        console.error('Error inserting food items:', foodItemsError);
+        alert('An error occurred while submitting the food items.');
     } else {
-        console.log('Data inserted successfully:', data);
-        alert('Form submitted successfully!');
+        alert('Order submitted successfully!');
         resetForm();
     }
+
     setSubmitting(false);
 };
 
 const CustomForm = () => {
+    const [selectedItems, setSelectedItems] = useState<FoodItemType[]>([]);
+
     return (
         <div className="container mx-auto px-4 py-8">
             <Formik
@@ -87,7 +99,7 @@ const CustomForm = () => {
                     order_occasion: '',
                 } as FormModel}
                 validationSchema={validationSchema}
-                onSubmit={submitForm}
+                onSubmit={(values, actions) => submitForm(values, selectedItems, actions)}
             >
                 {({ values, touched, errors, resetForm, setFieldValue }) => (
                     <Form>
@@ -150,7 +162,7 @@ const CustomForm = () => {
                             <h2 className="text-xl font-semibold mb-4">Order Details</h2>
                             <div className="flex gap-2">
                                 <FormItem
-                                className='w-6/12'
+                                    className="w-6/12"
                                     asterisk
                                     label="Client Name"
                                     invalid={errors.client_name && touched.client_name}
@@ -164,7 +176,7 @@ const CustomForm = () => {
                                     />
                                 </FormItem>
                                 <FormItem
-                                className='w-3/12'
+                                    className="w-3/12"
                                     asterisk
                                     label="Number of People"
                                     invalid={errors.people_count && touched.people_count}
@@ -178,7 +190,7 @@ const CustomForm = () => {
                                     />
                                 </FormItem>
                                 <FormItem
-                                className='w-3/12'
+                                    className="w-3/12"
                                     asterisk
                                     label="Occasion"
                                     invalid={errors.order_occasion && touched.order_occasion}
@@ -201,7 +213,7 @@ const CustomForm = () => {
 
                         <Card className="mb-6">
                             <h2 className="text-xl font-semibold mb-4">Food Items</h2>
-                            <FoodItem/>
+                            <FoodItem selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
                         </Card>
 
                         <div className="flex justify-end">
@@ -212,7 +224,7 @@ const CustomForm = () => {
                             >
                                 Reset
                             </Button>
-                            <Button variant="solid" type="submit" loading={false    }>
+                            <Button variant="solid" type="submit" loading={false}>
                                 Submit Order
                             </Button>
                         </div>

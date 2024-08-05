@@ -3,20 +3,17 @@ import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '@/backend/supabaseClient';
+import { Spinner } from '@/components/ui';
+import { FoodItemProps, FoodItemType } from '@/@types/createOrder.type';
 
 const foodCategories = ['Rice', 'Gravy', 'Bhaji', 'Dessert'];
 
-type FoodItemType = {
-    id: number;
-    item_name: string;
-    category: string;
-};
 
-const FoodItem: React.FC = () => {
-    const [selectedItems, setSelectedItems] = useState<FoodItemType[]>([]);
+const FoodItem: React.FC<FoodItemProps> = ({ selectedItems, setSelectedItems }) => {
     const [activeCategory, setActiveCategory] = useState<string>(foodCategories[0]);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [foodItems, setFoodItems] = useState<FoodItemType[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const toggleItem = (event: React.MouseEvent<HTMLDivElement>, item: FoodItemType) => {
         event.preventDefault();
@@ -37,6 +34,7 @@ const FoodItem: React.FC = () => {
         } else {
             setFoodItems(data as FoodItemType[]);
         }
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -88,10 +86,10 @@ const FoodItem: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col space-y-4 h-4/6 overflow-y-auto scrollbar-thin scrollbar-thumb-scrollbar-thumb scrollbar-track-scrollbar-track">
-                    {sortedItems.map((item, index) => (
+                    {!loading && sortedItems.map((item, index) => (
                         <motion.div
                             key={index}
-                            className={`bg-white p-4 rounded-lg w-11/12 shadow-md cursor-pointer flex items-center space-x-4 ${
+                            className={`bg-white ml-4 p-4 rounded-lg w-11/12 shadow-md cursor-pointer flex items-center space-x-4 ${
                                 selectedItems.includes(item) ? 'ring-2 ring-blue-500' : ''
                             }`}
                             onClick={(event) => toggleItem(event, item)}
@@ -102,7 +100,7 @@ const FoodItem: React.FC = () => {
                                 {/* Optional: Add image if you have it */}
                             </div>
                             <div>
-                                <h3 className="font-semibold text-xl text-gray-800">{item.item_name}</h3>
+                                <h3 className="font-semibold text-xl text-gray-800 capitalize">{item.item_name}</h3>
                             </div>
                             <div>
                                 {selectedItems.includes(item) && (
@@ -114,6 +112,7 @@ const FoodItem: React.FC = () => {
                             </div>
                         </motion.div>
                     ))}
+                    {loading && <Spinner className='flex justify-center items-center'/>}
                 </div>
             </div>
 
@@ -126,7 +125,7 @@ const FoodItem: React.FC = () => {
                         {selectedItems.map((item, index) => (
                             <motion.li
                                 key={index}
-                                className="flex justify-between items-center bg-gray-100 p-2 rounded"
+                                className="flex justify-between items-center bg-gray-100 p-2 rounded capitalize"
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 10 }}

@@ -5,6 +5,7 @@ export type AppConfig = {
     tourPath: string
     locale: string
     enableMock: boolean
+    dummyImage: string
 }
 
 const appConfig: AppConfig = {
@@ -14,6 +15,7 @@ const appConfig: AppConfig = {
     tourPath: '/',
     locale: 'en',
     enableMock: true,
+    dummyImage : 'https://www.pexels.com/photo/lighted-candle-695644/'
 }
 
 export default appConfig

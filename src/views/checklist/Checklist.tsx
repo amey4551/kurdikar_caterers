@@ -39,6 +39,7 @@ const Checklist: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchOrderData(orderId as string);
+      console.log('ggg',data);
       if (data) {
         const items = [
           { id: "1", text: "plates", count: data.people_count },
@@ -49,6 +50,20 @@ const Checklist: React.FC = () => {
           { id: "6", text: "tong", count: data.order_food_items.filter((item: any) => item.food_item_data.serving_spoon === "tong").length },
           { id: "7", text: "round serving spoon", count: data.order_food_items.filter((item: any) => item.food_item_data.serving_spoon === "serving_spoon_round").length },
           { id: "8", text: "flat serving spoon", count: data.order_food_items.filter((item: any) => item.food_item_data.serving_spoon === "serving_spoon_flat").length },
+          { id: "9", text: "small serving spoon", count: data.order_food_items.filter((item: any) => item.food_item_data.serving_spoon === "serving_spoon_small").length },
+          { id: "10", text: "large serving spoon", count: data.order_food_items.filter((item: any) => item.food_item_data.serving_spoon === "serving_spoon_large").length },
+          { id: "11", text: "water bottle", count: Math.floor(data.people_count / 100) },
+          { id: "12", text: "table", count: Math.floor((data.order_food_items.length + 1) / 4 ) },
+          { id: "13", text: "table cloth", count: Math.floor((data.order_food_items.length + 1) / 4 ) },
+          { id: "14", text: "tissue paper", count: Math.floor((data.people_count + 120) / 60) },
+          { id: "15", text: "name tag", count: '' },
+          { id: "16", text: "water dispenser", count: Math.floor(data.people_count / 100) },
+          { id: "17", text: "water bottle stand", count: Math.floor(data.people_count / 100) },
+        ];
+        const conditionalItems = [
+          { id: "1", text: "sol curry", count: data.people_count },
+          { id: "2", text: "scoop", count: data.people_count },
+          { id: "3", text: "pickel container", count: data.people_count },
         ];
         setCheckListItems(items);
       }
@@ -107,7 +122,7 @@ const Checklist: React.FC = () => {
         >
           <div className="flex justify-between items-center">
             <div className="text-base font-medium capitalize">{item.text}</div>
-            <div className="text-sm font-semibold text-gray-600 ml-4">Qty: {item.count}</div>
+            <div className="text-sm font-semibold text-gray-600 ml-4"> {item.count}</div>
           </div>
         </Checkbox>
       </motion.li>

@@ -29,3 +29,28 @@ export type FormModel = {
     people_count: number;
     order_occasion: string;
 };
+
+export type CreateDraftType = {
+    id: number;
+    created_at: string;
+    order_date: string;
+    order_time: string;
+    order_location: string;
+    client_name: string;
+    people_count: number;
+    order_occasion: string;
+    order_status: string;
+    order_food_items: FoodItemData[];
+  };
+  
+  type FoodItemData = {
+    id: number;
+    item_name: string;
+    item_type: boolean;
+    cutlery_type: string;
+    serving_spoon: string;
+  };
+  
+  export type ComponentPropType = {
+    data: CreateDraftType
+  }

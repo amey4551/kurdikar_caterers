@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FormItem, FormContainer } from '@/components/ui/Form';
+import React, { useState, useEffect } from 'react';
+import { FormItem } from '@/components/ui/Form';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
@@ -12,8 +12,7 @@ import { Card } from '@/components/ui';
 import { supabase } from '@/backend/supabaseClient';
 import { FieldProps } from 'formik';
 import FoodItem from './FoodItem';
-import { FoodItemType, FormModel, Option } from '@/@types/createOrder.type';
-
+import { ComponentPropType, CreateDraftType, FoodItemType, FormModel, Option } from '@/@types/createOrder.type';
 
 const occasionOptions: Option[] = [
     { value: 'birthday', label: 'Birthday' },
@@ -38,68 +37,80 @@ const validationSchema = Yup.object().shape({
     order_occasion: Yup.string().required('Please select an occasion!'),
 });
 
-const submitForm = async (values: FormModel, selectedItems: FoodItemType[], { setSubmitting, resetForm }: FormikHelpers<FormModel>) => {
-    // Insert into order_datetime_details and get the generated id
-    const { data: orderData, error: orderError } = await supabase
-        .from('order_datetime_details')
-        .insert([{
-            order_date: values.order_date,
-            order_time: values.order_time,
-            order_location: values.order_location,
-            client_name: values.client_name,
-            people_count: values.people_count,
-            order_occasion: values.order_occasion,
-        }])
-        .select('id')
-        .single();
+const submitForm = async (
+    values: FormModel, 
+    selectedItems: FoodItemType[], 
+    setSelectedItems: React.Dispatch<React.SetStateAction<FoodItemType[]>>,
+    { setSubmitting, resetForm }: FormikHelpers<FormModel>
+) => {
+    try {
+        // Insert into order_datetime_details and get the generated id
+        const { data: orderData, error: orderError } = await supabase
+            .from('order_datetime_details')
+            .insert([{
+                order_date: values.order_date,
+                order_time: values.order_time,
+                order_location: values.order_location,
+                client_name: values.client_name,
+                people_count: values.people_count,
+                order_occasion: values.order_occasion,
+            }])
+            .select('id')
+            .single();
 
-    if (orderError) {
-        alert('An error occurred while submitting the order details.');
-        setSubmitting(false);
-        return;
-    }
+        if (orderError) throw orderError;
 
-    const orderId = orderData.id;
+        const orderId = orderData.id;
 
-    // Insert into order_food_items for each selected food item
-    const foodItemsToInsert = selectedItems.map(item => ({
-        order_id: orderId,
-        food_item_id: item.id,
-        food_item_name: item.item_name,
-    }));
+        // Insert into order_food_items for each selected food item
+        const foodItemsToInsert = selectedItems.map(item => ({
+            order_id: orderId,
+            food_item_id: item.id,
+            food_item_name: item.item_name,
+        }));
 
-    const { error: foodItemsError } = await supabase
-        .from('order_food_items')
-        .insert(foodItemsToInsert);
+        const { error: foodItemsError } = await supabase
+            .from('order_food_items')
+            .insert(foodItemsToInsert);
 
-    if (foodItemsError) {
-        console.error('Error inserting food items:', foodItemsError);
-        alert('An error occurred while submitting the food items.');
-    } else {
+        if (foodItemsError) throw foodItemsError;
+
         alert('Order submitted successfully!');
         resetForm();
+        setSelectedItems([]);
+    } catch (error) {
+        console.error('Error submitting order:', error);
+        alert('An error occurred while submitting the order. Please try again.');
+    } finally {
+        setSubmitting(false);
     }
-
-    setSubmitting(false);
 };
 
-const CustomForm = () => {
+const CustomForm:React.FC<any> = ({ data }) => {
     const [selectedItems, setSelectedItems] = useState<FoodItemType[]>([]);
+    useEffect(() => {
+        if (data && data.order_food_items) {
+            const items = data.order_food_items.map((item: any) => item.food_item_data);
+            setSelectedItems(items);
+        }
+    }, [data]);
+
+    const initialValues: FormModel = {
+        order_date: data?.order_date ? new Date(data.order_date) : null,
+        order_time: data?.order_time ? data.order_time.slice(0, 5) : '12:00',
+        order_location: data?.order_location || '',
+        client_name: data?.client_name || '',
+        people_count: data?.people_count || 1,
+        order_occasion: data?.order_occasion || '',
+    };
 
     return (
         <div className="container mx-auto px-4 py-8">
             <Formik
                 enableReinitialize
-                initialValues={{
-                    order_date: null,
-                    order_time: '12:00',
-                    order_location: '',
-                    client_name: '',
-                    people_count: 1,
-                    order_occasion: '',
-                } as FormModel}
+                initialValues={initialValues}
                 validationSchema={validationSchema}
-                onSubmit={(values, actions) => submitForm(values, selectedItems, actions)}
+                onSubmit={(values, actions) => submitForm(values, selectedItems, setSelectedItems, actions)}
             >
                 {({ values, touched, errors, resetForm, setFieldValue }) => (
                     <Form>
@@ -213,19 +224,26 @@ const CustomForm = () => {
 
                         <Card className="mb-6">
                             <h2 className="text-xl font-semibold mb-4">Food Items</h2>
-                            <FoodItem selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
+                            <FoodItem 
+                                selectedItems={selectedItems} 
+                                setSelectedItems={setSelectedItems}
+                                initialItems={data?.order_food_items?.map((item: any) => item.food_item_data) || []}
+                            />
                         </Card>
 
                         <div className="flex justify-end">
                             <Button
                                 type="reset"
                                 className="mr-4"
-                                onClick={() => resetForm()}
+                                onClick={() => {
+                                    resetForm();
+                                    setSelectedItems([]);
+                                }}
                             >
                                 Reset
                             </Button>
-                            <Button variant="solid" type="submit" loading={false}>
-                                Submit Order
+                            <Button variant="solid" type="submit">
+                                {data ? 'Update Order' : 'Submit Order'}
                             </Button>
                         </div>
                     </Form>

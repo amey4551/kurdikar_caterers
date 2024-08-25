@@ -9,7 +9,7 @@ import { FoodItemProps, FoodItemType } from '@/@types/createOrder.type';
 const foodCategories = ['Rice', 'Gravy', 'Bhaji', 'Dessert'];
 
 
-const FoodItem: React.FC<FoodItemProps> = ({ selectedItems, setSelectedItems }) => {
+const FoodItem: React.FC<any> = ({ selectedItems, setSelectedItems }) => {
     const [activeCategory, setActiveCategory] = useState<string>(foodCategories[0]);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [foodItems, setFoodItems] = useState<FoodItemType[]>([]);
@@ -17,9 +17,9 @@ const FoodItem: React.FC<FoodItemProps> = ({ selectedItems, setSelectedItems }) 
 
     const toggleItem = (event: React.MouseEvent<HTMLDivElement>, item: FoodItemType) => {
         event.preventDefault();
-        setSelectedItems((prev) =>
+        setSelectedItems((prev : any) =>
             prev.includes(item)
-                ? prev.filter((i) => i !== item)
+                ? prev.filter((i: any) => i !== item)
                 : [...prev, item]
         );
     };
@@ -122,7 +122,7 @@ const FoodItem: React.FC<FoodItemProps> = ({ selectedItems, setSelectedItems }) 
                     <p className="text-gray-600">No items selected yet.</p>
                 ) : (
                     <ul className="space-y-2">
-                        {selectedItems.map((item, index) => (
+                        {selectedItems.map((item : any, index : number) => (
                             <motion.li
                                 key={index}
                                 className="flex justify-between items-center bg-gray-100 p-2 rounded capitalize"
@@ -130,7 +130,7 @@ const FoodItem: React.FC<FoodItemProps> = ({ selectedItems, setSelectedItems }) 
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 10 }}
                             >
-                                <span>{item.item_name}</span>
+                                <span>{item.item_name}</span> 
                             </motion.li>
                         ))}
                     </ul>

@@ -1,8 +1,8 @@
-import ManageOrders from "./manageOrders/ManageOrders"
+import CreateDraft from "./createDraft/CreateDraft"
 
 const Home = () => {
     return <div>
-      <ManageOrders/>
+      <CreateDraft/>
     </div>
 }
 

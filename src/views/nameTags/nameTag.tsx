@@ -1,36 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { jsPDF } from 'jspdf'
-import { supabase } from '@/backend/supabaseClient'
-import { FoodItemTypeMenu } from '@/@types/createOrder.type'
-import { Skeleton, Spinner } from '@/components/ui'
-import { useParams } from 'react-router-dom'
 
-const NameTag = () => {
+import { jsPDF } from 'jspdf'
+import { Skeleton } from '@/components/ui'
+import { useState } from 'react'
+
+const NameTag:React.FC<any> = ({data, loading}) => {
     const [itemWidth, setItemWidth] = useState(100) // Default item width
     const [itemHeight, setItemHeight] = useState(50) // Default item height
     const [useCustomSize, setUseCustomSize] = useState(false) // State for the checkbox
     const [customFontSize, setCustomFontSize] = useState(25) // State for the custom font size
-    const [foodItems, setFoodItems] = useState<FoodItemTypeMenu[]>([])
-    const [loading, setLoading] = useState<boolean>(true)
-    const params = useParams()
-
-    const fetchFoodItems = async () => {
-        const { data, error } = await supabase
-            .from('order_food_items')
-            .select('*')
-            .eq('order_id', params.id)
-
-        if (error) {
-            console.error('Error fetching food items:', error)
-        } else {
-            setFoodItems(data as FoodItemTypeMenu[])
-        }
-        setLoading(false)
-    }
-
-    useEffect(() => {
-        fetchFoodItems()
-    }, [])
 
     const handlePrint = () => {
         const doc = new jsPDF()
@@ -40,7 +17,7 @@ const NameTag = () => {
         let x = 10 // Starting X position with a margin of 10 mm
         let y = 10 // Starting Y position with a margin of 10 mm
 
-        foodItems.forEach((item, index) => {
+        data.food_item_data.forEach((item : any, index : number) => {
             const itemName = item.food_item_name.toUpperCase() // Convert item name to uppercase
 
             // Calculate available width on the current page
@@ -141,23 +118,17 @@ const NameTag = () => {
                 </h1>
                 {!loading ? (
                     <ul className="mb-6">
-                        {foodItems.map((item) => (
+                        {data.map((item : any) => (
                             <li
                                 key={item.id}
                                 className="text-lg mb-2 text-gray-700"
                             >
-                                {item.food_item_name.toUpperCase()}
+                                {item.food_item_data.item_name.toUpperCase()}
                             </li>
                         ))}
                     </ul>
                 ) : (
                     <div className="flex flex-col gap-4 my-3">
-                        <div className="flex items-center gap-4">
-                            <div>
-                                <Skeleton variant="circle" />
-                            </div>
-                            <Skeleton />
-                        </div>
                         <div className="flex items-center gap-4">
                             <div>
                                 <Skeleton variant="circle" />

@@ -130,7 +130,7 @@ const FoodItem: React.FC<any> = ({ selectedItems, setSelectedItems }) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 10 }}
                             >
-                                <span>{item.item_name}</span>
+                                <span>{item.item_name}</span> 
                             </motion.li>
                         ))}
                     </ul>

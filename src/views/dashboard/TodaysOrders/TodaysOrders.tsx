@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Card from '@/components/ui/card';
 import { CalendarClock, Users, MapPin } from 'lucide-react';
 import { supabase } from '@/backend/supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import { Card } from '@/components/ui';
 
 type Order = {
   id: number;

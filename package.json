@@ -39,6 +39,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.436.0",
     "miragejs": "^0.1.47",
     "react": "^18.2.0",
     "react-custom-scrollbars-2": "^4.5.0",

@@ -54,6 +54,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
         headerExtra && 'card-header-extra',
         headerClass
     )
+    
     const cardFooterClass = classNames(
         'card-footer',
         footerBorder && `card-footer-border`,

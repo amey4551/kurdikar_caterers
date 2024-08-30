@@ -1,14 +1,12 @@
-import { useState, useEffect } from 'react';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/backend/supabaseClient'; // Adjust the path as needed
+import { supabase } from '@/backend/supabaseClient';
+import CalendarView from '@/components/shared/CalendarView';
 
 function Events() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<any>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,12 +19,13 @@ function Events() {
         if (error) throw error;
 
         const formattedEvents = data.map(order => ({
-          id: order.id,
+          id: order.id.toString(),
           title: `${order.client_name} - ${order.order_occasion} - ${order.people_count} people`,
-          date: order.order_date,
+          start: order.order_date,
+          eventColor: getRandomColor(),
         }));
 
-        setEvents(formattedEvents as any);
+        setEvents(formattedEvents);
       } catch (error) {
         setError('Failed to fetch events.');
         console.error('Error fetching events:', error);
@@ -38,8 +37,8 @@ function Events() {
     fetchOrders();
   }, []);
 
-  const handleEventClick = (clickInfo : any) => {
-    const orderId = clickInfo.event.id;
+  const handleEventClick = (arg: any) => {
+    const orderId = arg.event.id;
     navigate(`/orderDetails/${orderId}`);
   };
 
@@ -50,20 +49,26 @@ function Events() {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Order Calendar</h1>
       <div className="bg-white rounded-lg shadow">
-        <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
+        <CalendarView
           events={events}
           eventClick={handleEventClick}
-          headerToolbar={{
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,dayGridWeek,dayGridDay'
+          select={(event) => {
+            console.log('onCellSelect', event);
           }}
+          eventDrop={(arg) => {
+            console.log('onEventChange', arg);
+          }}
+          editable
+          selectable
         />
       </div>
     </div>
   );
+}
+
+function getRandomColor() {
+  const colors = ['red', 'blue', 'green', 'purple', 'orange', 'emerald'];
+  return colors[Math.floor(Math.random() * colors.length)];
 }
 
 export default Events;

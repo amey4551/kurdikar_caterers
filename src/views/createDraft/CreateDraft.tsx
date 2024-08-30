@@ -24,7 +24,7 @@ const CreateDraft = () => {
 
     return (
         <div>
-            <Button variant="solid" onClick={() => openDialog()}>
+            <Button variant="solid" size="sm" onClick={() => openDialog()}>
             Schedule Order
             </Button>
             <Dialog

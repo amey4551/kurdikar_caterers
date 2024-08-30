@@ -7,6 +7,7 @@ import View from "@/views";
 import Search from "../template/Search";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
+import CreateDraft from "@/views/createDraft/CreateDraft";
 
 const HeaderActionsStart = () => {
   return (
@@ -21,7 +22,8 @@ const HeaderActionsStart = () => {
 const HeaderActionsEnd = () => {
   const { t } = useTranslation("dashboard");
   return (
-    <>/
+    <>
+      <CreateDraft/>
       <UserDropdown hoverable={false} />
     </>
   );

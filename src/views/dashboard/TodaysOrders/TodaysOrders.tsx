@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { CalendarClock, Users, MapPin } from 'lucide-react';
 import { supabase } from '@/backend/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { Card } from '@/components/ui';
 
 type Order = {
   id: number;
@@ -56,7 +55,7 @@ const TodaysOrders: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-xl mx-auto overflow-hidden shadow-lg">
+    <div className="w-full max-w-xl mx-auto overflow-hidden shadow-lg">
       <div className="bg-gradient-to-r from-blue-300 to-blue-200 text-white p-2 rounded-lg">
         <h2 className="text-xl font-semibold">Today's Orders</h2>
       </div>
@@ -108,7 +107,7 @@ const TodaysOrders: React.FC = () => {
           ))
         )}
       </div>
-    </Card>
+    </div>
   );
 };
 

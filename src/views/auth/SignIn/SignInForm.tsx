@@ -1,3 +1,4 @@
+import React from 'react'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import { FormItem, FormContainer } from '@/components/ui/Form'
@@ -21,13 +22,13 @@ interface SignInFormProps extends CommonProps {
 }
 
 type SignInFormSchema = {
-    userName: string
+    email: string
     password: string
     rememberMe: boolean
 }
 
 const validationSchema = Yup.object().shape({
-    userName: Yup.string().required('Please enter your user name'),
+    email: Yup.string().email('Invalid email').required('Please enter your email'),
     password: Yup.string().required('Please enter your password'),
     rememberMe: Yup.bool(),
 })
@@ -49,40 +50,33 @@ const SignInForm = (props: SignInFormProps) => {
         values: SignInFormSchema,
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
-        const { userName, password } = values
+        const { email, password } = values
         setSubmitting(true)
 
         try {
             const { data: { session }, error } = await supabase.auth.signInWithPassword({
-                email: userName,
+                email,
                 password,
             })
 
-            if (error) {
-                throw error
-            }
+            if (error) throw error
 
             if (session) {
-                const token = session.access_token
+                const { user, access_token } = session
 
-                if (token) {
-                    dispatch(signInSuccess(token))
-                    dispatch(
-                        setUser({
-                            userName: userName,
-                            email: userName, // Assuming email is same as userName here; adjust if needed
-                            avatar: '', // Set this if you have user avatar URL
-                            authority: ['USER'],
-                        })
-                    )
-                }
+                dispatch(signInSuccess(access_token))
+                dispatch(setUser({
+                    userName: user.email,
+                    email: user.email,
+                    avatar: user.user_metadata.avatar_url || '',
+                    authority: ['USER'], // Adjust based on your user roles logic
+                }))
 
                 const redirectUrl = query.get('redirect_url') || appConfig.authenticatedEntryPath
                 navigate(redirectUrl)
-                setMessage('Sign-in successful!')
             }
         } catch (error: any) {
-            setMessage(error.message || 'An error occurred')
+            setMessage(error.message || 'An error occurred during sign in')
         }
 
         setSubmitting(false)
@@ -97,7 +91,7 @@ const SignInForm = (props: SignInFormProps) => {
             )}
             <Formik
                 initialValues={{
-                    userName: '',
+                    email: '',
                     password: '',
                     rememberMe: false,
                 }}
@@ -114,15 +108,15 @@ const SignInForm = (props: SignInFormProps) => {
                     <Form>
                         <FormContainer>
                             <FormItem
-                                label="User Name"
-                                invalid={errors.userName && touched.userName}
-                                errorMessage={errors.userName}
+                                label="Email"
+                                invalid={errors.email && touched.email}
+                                errorMessage={errors.email}
                             >
                                 <Field
-                                    type="text"
-                                    autoComplete="off"
-                                    name="userName"
-                                    placeholder="User Name"
+                                    type="email"
+                                    autoComplete="email"
+                                    name="email"
+                                    placeholder="Email"
                                     component={Input}
                                 />
                             </FormItem>
@@ -132,7 +126,7 @@ const SignInForm = (props: SignInFormProps) => {
                                 errorMessage={errors.password}
                             >
                                 <Field
-                                    autoComplete="off"
+                                    autoComplete="current-password"
                                     name="password"
                                     placeholder="Password"
                                     component={PasswordInput}
@@ -149,6 +143,9 @@ const SignInForm = (props: SignInFormProps) => {
                             <div className="mt-4 text-center">
                                 <span>{`Don't have an account yet? `}</span>
                                 <ActionLink to={signUpUrl}>Sign up</ActionLink>
+                            </div>
+                            <div className="mt-2 text-center">
+                                <ActionLink to={forgotPasswordUrl}>Forgot Password?</ActionLink>
                             </div>
                         </FormContainer>
                     </Form>

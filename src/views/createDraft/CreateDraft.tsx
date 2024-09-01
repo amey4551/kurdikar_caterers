@@ -17,11 +17,6 @@ const CreateDraft = () => {
         setIsOpen(false)
     }
 
-    const onDialogOk = (e: MouseEvent) => {
-        console.log('onDialogOk', e)
-        setIsOpen(false)
-    }
-
     return (
         <div>
             <Button variant="solid" size="sm" onClick={() => openDialog()}>
@@ -35,19 +30,7 @@ const CreateDraft = () => {
             >
                 <div className="flex flex-col h-full justify-between">
                     <h5 className="mb-4">Register order</h5>
-                    <CreateDraftForm/>
-                    {/* <div className="text-right mt-6">
-                        <Button
-                            className="ltr:mr-2 rtl:ml-2"
-                            variant="plain"
-                            onClick={onDialogClose}
-                        >
-                            Cancel
-                        </Button>
-                        <Button variant="solid" onClick={onDialogOk}>
-                            Okay
-                        </Button>
-                    </div> */}
+                    <CreateDraftForm onDialogClose={onDialogClose}/>
                 </div>
             </Dialog>
         </div>

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { CalendarClock, Users, MapPin } from 'lucide-react';
+import { CalendarClock, Users, MapPin, Clock } from 'lucide-react';
 import { supabase } from '@/backend/supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import { Card } from '@/components/ui';
+import TableRowSkeleton from '@/components/shared/loaders/TableRowSkeleton';
 
 type Order = {
   id: number;
@@ -18,10 +20,6 @@ const TodaysOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  const handleEventClick = (orderId: number) => {
-    navigate(`/orderDetails/${orderId}`);
-  };
 
   useEffect(() => {
     const fetchTodaysOrders = async () => {
@@ -43,71 +41,78 @@ const TodaysOrders: React.FC = () => {
     fetchTodaysOrders();
   }, []);
 
+  const handleEventClick = (orderId: number) => {
+    navigate(`/orderDetails/${orderId}`);
+  };
+
   const getStatusColor = (status: string | null) => {
     switch (status) {
       case 'Confirmed':
-        return 'bg-green-500';
+        return 'bg-green-100 text-green-800 border-green-300';
       case 'Pending':
-        return 'bg-yellow-500';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
       default:
-        return 'bg-gray-500';
+        return 'bg-gray-100 text-gray-800 border-gray-300';
     }
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto overflow-hidden shadow-lg">
-      <div className="bg-gradient-to-r from-blue-300 to-blue-200 text-white p-2 rounded-lg">
-        <h2 className="text-xl font-semibold">Today's Orders</h2>
+    <Card className="bg-white rounded-lg overflow-hidden h-full">
+      <div className="px-6 py-4">
+        <h2 className="text-2xl font-bold text-black">Today's Orders</h2>
       </div>
-      <div className="p-4 bg-white">
+      <div className="p-6">
         {loading ? (
-          <p className="text-center text-gray-500">Loading...</p>
+          <TableRowSkeleton
+          avatarInColumns={[0]}
+          columns={3}
+          rows={5}
+          avatarProps={{
+              width: 700,
+              height: 50,
+          }}
+      />
         ) : orders.length === 0 ? (
-          <p className="text-center text-gray-500">No orders for today</p>
+          <p className="text-gray-500 text-center py-12 text-lg">No orders for today</p>
         ) : (
-          orders.map((order) => (
-            <div
-              key={order.id}
-              onClick={() => handleEventClick(order.id)}
-              onFocus={(e) => e.currentTarget.classList.add('ring', 'ring-blue-300')} 
-              onBlur={(e) => e.currentTarget.classList.remove('ring', 'ring-blue-300')} 
-              tabIndex={0}
-              className="mb-4 last:mb-0 border-b border-gray-200 pb-4 last:border-b-0 cursor-pointer hover:bg-gray-100 focus:outline-none hover:shadow-lg transition-shadow duration-200"
-            >
-              <div className="flex items-center -mx-2">
-                <div className="flex-1 px-2">
-                  <h3 className="text-lg font-semibold text-gray-800">{order.client_name}</h3>
-                  <p className="text-sm font-medium text-gray-600">{order.order_occasion}</p>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {orders.map((order) => (
+              <div
+                key={order.id}
+                onClick={() => handleEventClick(order.id)}
+                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer overflow-hidden"
+              >
+                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-800 truncate">{order.client_name}</h3>
                 </div>
-                <div className="flex-1 px-2">
-                  <div className="flex items-center mb-1">
-                    <CalendarClock size={16} className="mr-2 text-red-500 flex-shrink-0" />
-                    <span className="text-sm text-gray-600">{order.order_time}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <MapPin size={16} className="mr-2 text-red-500 flex-shrink-0" />
-                    <span className="text-sm text-gray-600">{order.order_location}</span>
-                  </div>
-                </div>
-                <div className="flex-1 px-2">
-                  <div className="flex items-center">
-                    <Users size={16} className="mr-2 text-red-500 flex-shrink-0" />
-                    <span className="text-sm text-gray-600">{order.people_count} people</span>
+                <div className="p-4">
+                  <p className="text-sm text-gray-600 mb-3">{order.order_occasion}</p>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-sm">
+                      <Clock className="w-4 h-4 mr-2 text-indigo-500" />
+                      <span>{order.order_time}</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <MapPin className="w-4 h-4 mr-2 text-indigo-500" />
+                      <span className="truncate">{order.order_location}</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <Users className="w-4 h-4 mr-2 text-indigo-500" />
+                      <span>{order.people_count} people</span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex-1 px-2 flex justify-center">
-                  <span
-                    className={`${getStatusColor(order.order_status)} text-white px-3 py-1 rounded-full text-xs font-medium`}
-                  >
+                <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
+                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.order_status)}`}>
                     {order.order_status || 'Pending'}
                   </span>
                 </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 };
 

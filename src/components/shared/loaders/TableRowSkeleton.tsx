@@ -23,9 +23,8 @@ const TableRowSkeleton = (props: TableRowSkeletonProps) => {
                             <Td key={`col-${col}`}>
                                 <div className="flex flex-auto items-center gap-2">
                                     {avatarInColumns.includes(col) && (
-                                        <div>
+                                        <div className='my-2'>
                                             <Skeleton
-                                                variant="circle"
                                                 {...avatarProps}
                                             />
                                         </div>

@@ -1,9 +1,8 @@
-
 import { jsPDF } from 'jspdf'
 import { Skeleton } from '@/components/ui'
 import { useState } from 'react'
 
-const NameTag:React.FC<any> = ({data, loading}) => {
+const NameTag: React.FC<any> = ({ data, loading }) => {
     const [itemWidth, setItemWidth] = useState(100) // Default item width
     const [itemHeight, setItemHeight] = useState(50) // Default item height
     const [useCustomSize, setUseCustomSize] = useState(false) // State for the checkbox
@@ -17,7 +16,7 @@ const NameTag:React.FC<any> = ({data, loading}) => {
         let x = 10 // Starting X position with a margin of 10 mm
         let y = 10 // Starting Y position with a margin of 10 mm
 
-        data.food_item_data.forEach((item : any, index : number) => {
+        data.food_item_data.forEach((item: any, index: number) => {
             const itemName = item.food_item_name.toUpperCase() // Convert item name to uppercase
 
             // Calculate available width on the current page
@@ -118,7 +117,7 @@ const NameTag:React.FC<any> = ({data, loading}) => {
                 </h1>
                 {!loading ? (
                     <ul className="mb-6">
-                        {data.map((item : any) => (
+                        {data.map((item: any) => (
                             <li
                                 key={item.id}
                                 className="text-lg mb-2 text-gray-700"
@@ -248,6 +247,7 @@ const NameTag:React.FC<any> = ({data, loading}) => {
                     )}
                 </div>
                 <button
+                    disabled={!data || data.length === 0}
                     onClick={handlePrint}
                     className="w-full bg-gradient-to-r from-green-400 to-green-600 text-white py-3 rounded-lg shadow-md hover:from-green-500 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition ease-in-out duration-150"
                 >

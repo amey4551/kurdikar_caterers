@@ -86,15 +86,9 @@ const SideNav = () => {
                     )}
                 >
                     <div className="side-nav-header">
-                        <Logo
-                            className={
-                                sideNavCollapse
-                                    ? SIDE_NAV_CONTENT_GUTTER
-                                    : LOGO_X_GUTTER
-                            }
-                            text="text-black mb-4"
-                            logoTooltip={true}
-                        />
+                       <h3 className='text-2xl ml-7 mt-4'>
+                        {/* Kurdikar caterers */}
+                       </h3>
                     </div>
                     <div
                         className={`${

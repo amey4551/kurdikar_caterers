@@ -38,8 +38,9 @@ const ManageOrders = () => {
     }
 
     useEffect(()=>{
+        if(params)
         fetchOrderData(params.id as string)
-    },[])
+    },[params])
 
     return (
         <div>

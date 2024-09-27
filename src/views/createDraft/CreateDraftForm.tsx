@@ -149,24 +149,14 @@ const CreateDraftForm:React.FC<any> = ({onDialogClose}) => {
             const orderId = orderData.id
             if (orderId) {
                 const accessToken = session.provider_token
-                if (!accessToken) {
-                    throw new Error(
-                        'No access token available for Google Calendar'
-                    )
-                }
-
-                try {
+                if (accessToken) {
                     await createCalendarEvent(values, orderId, accessToken)
                     console.log('Calendar event created successfully')
-                } catch (calendarError) {
-                    console.error(
-                        'Failed to create calendar event:',
-                        calendarError
-                    )
+                    
                 }
-                onDialogClose(false)
-                navigate(`/orderDetails/${orderId}`)
             }
+            onDialogClose(false)
+            navigate(`/orderDetails/${orderId}`)
         } catch (error) {
             console.error('An error occurred:', error)
             setFormError(

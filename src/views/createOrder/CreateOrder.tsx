@@ -13,6 +13,7 @@ import { supabase } from '@/backend/supabaseClient';
 import { FieldProps } from 'formik';
 import FoodItem from './FoodItem';
 import { ComponentPropType, CreateDraftType, FoodItemType, FormModel, Option } from '@/@types/createOrder.type';
+import { useParams } from 'react-router-dom';
 
 const occasionOptions: Option[] = [
     { value: 'birthday', label: 'Birthday' },
@@ -41,28 +42,34 @@ const submitForm = async (
     values: FormModel, 
     selectedItems: FoodItemType[], 
     setSelectedItems: React.Dispatch<React.SetStateAction<FoodItemType[]>>,
-    { setSubmitting, resetForm }: FormikHelpers<FormModel>
+    { setSubmitting, resetForm }: FormikHelpers<FormModel>,
+    orderId: string
 ) => {
     try {
-        // Insert into order_datetime_details and get the generated id
-        const { data: orderData, error: orderError } = await supabase
+        // Update the order_datetime_details table
+        const { error: orderError } = await supabase
             .from('order_datetime_details')
-            .insert([{
+            .update({
                 order_date: values.order_date,
                 order_time: values.order_time,
                 order_location: values.order_location,
                 client_name: values.client_name,
                 people_count: values.people_count,
                 order_occasion: values.order_occasion,
-            }])
-            .select('id')
-            .single();
+            })
+            .eq('id', orderId);
 
         if (orderError) throw orderError;
 
-        const orderId = orderData.id;
+        // Delete existing food items for this order
+        const { error: deleteError } = await supabase
+            .from('order_food_items')
+            .delete()
+            .eq('order_id', orderId);
 
-        // Insert into order_food_items for each selected food item
+        if (deleteError) throw deleteError;
+
+        // Insert new food items for this order
         const foodItemsToInsert = selectedItems.map(item => ({
             order_id: orderId,
             food_item_id: item.id,
@@ -75,12 +82,10 @@ const submitForm = async (
 
         if (foodItemsError) throw foodItemsError;
 
-        alert('Order submitted successfully!');
-        resetForm();
-        setSelectedItems([]);
+        alert('Order updated successfully!');
     } catch (error) {
-        console.error('Error submitting order:', error);
-        alert('An error occurred while submitting the order. Please try again.');
+        console.error('Error updating order:', error);
+        alert('An error occurred while updating the order. Please try again.');
     } finally {
         setSubmitting(false);
     }
@@ -88,6 +93,7 @@ const submitForm = async (
 
 const CustomForm:React.FC<any> = ({ data }) => {
     const [selectedItems, setSelectedItems] = useState<FoodItemType[]>([]);
+    const params = useParams<{ id: string }>();
     useEffect(() => {
         if (data && data.order_food_items) {
             const items = data.order_food_items.map((item: any) => item.food_item_data);
@@ -110,7 +116,7 @@ const CustomForm:React.FC<any> = ({ data }) => {
                 enableReinitialize
                 initialValues={initialValues}
                 validationSchema={validationSchema}
-                onSubmit={(values, actions) => submitForm(values, selectedItems, setSelectedItems, actions)}
+                onSubmit={(values, actions) => submitForm(values, selectedItems, setSelectedItems, actions, params.id!)}
             >
                 {({ values, touched, errors, resetForm, setFieldValue }) => (
                     <Form>

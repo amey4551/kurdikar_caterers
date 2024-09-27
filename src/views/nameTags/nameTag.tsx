@@ -16,8 +16,8 @@ const NameTag: React.FC<any> = ({ data, loading }) => {
         let x = 10 // Starting X position with a margin of 10 mm
         let y = 10 // Starting Y position with a margin of 10 mm
 
-        data.food_item_data.forEach((item: any, index: number) => {
-            const itemName = item.food_item_name.toUpperCase() // Convert item name to uppercase
+        data.forEach((item: any, index: number) => {
+            const itemName = item.food_item_data.item_name.toUpperCase() // Convert item name to uppercase
 
             // Calculate available width on the current page
             const availableWidth = pageWidth - x

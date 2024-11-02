@@ -10,10 +10,9 @@ import UpdateOrders from '../updateOrders'
 const { TabNav, TabList, TabContent } = Tabs
 
 const ManageOrders = () => {
-    
-  const [response, setResponse] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const params = useParams<{ id: string }>();
+    const [response, setResponse] = useState<any>([])
+    const [loading, setLoading] = useState<boolean>(true)
+    const params = useParams<{ id: string }>()
 
     const fetchOrderData = async (orderId: string) => {
         const { data, error } = await supabase
@@ -29,41 +28,44 @@ const ManageOrders = () => {
             .eq('id', orderId)
             .single()
 
+        setResponse(data)
+
         if (error) {
             console.error('Error fetching order details:', error)
             return null
         }
-        setResponse(data)
         setLoading(false)
     }
 
-    useEffect(()=>{
-        if(params)
-        fetchOrderData(params.id as string)
-    },[params])
+    useEffect(() => {
+        if (params) fetchOrderData(params.id as string)
+    }, [params])
 
     return (
         <div>
-            <Tabs defaultValue="tab1">
+            <Tabs defaultValue="tab1"   >
                 <TabList>
                     <TabNav value="tab1">Order details</TabNav>
                     <TabNav value="tab2">Checklist</TabNav>
                     <TabNav value="tab3">Name tags</TabNav>
-                    <TabNav value="tab4">Reciept</TabNav>
+                    {/* <TabNav value="tab4">Reciept</TabNav> */}
                 </TabList>
                 <div className="p-4">
                     <TabContent value="tab1">
-                        <UpdateOrders data={response}/>
+                        <UpdateOrders data={response} />
                     </TabContent>
                     <TabContent value="tab2">
-                        <Checklist data={response}/>
+                        <Checklist data={response} />
                     </TabContent>
                     <TabContent value="tab3">
-                        <NameTag data={response.order_food_items} loading={loading}/>
+                        <NameTag
+                            data={response.order_food_items}
+                            loading={loading}
+                        />
                     </TabContent>
-                    <TabContent value="tab4">
+                    {/* <TabContent value="tab4">
                         <Invoice />
-                    </TabContent>
+                    </TabContent> */}
                 </div>
             </Tabs>
         </div>

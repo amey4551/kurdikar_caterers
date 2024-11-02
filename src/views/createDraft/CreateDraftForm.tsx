@@ -4,7 +4,8 @@ import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import Select from '@/components/ui/Select'
 import DatePicker from '@/components/ui/DatePicker'
-import TimePicker from 'react-time-picker'
+import Flatpickr from 'react-flatpickr'
+import 'flatpickr/dist/themes/material_blue.css'
 import 'react-time-picker/dist/TimePicker.css'
 import * as Yup from 'yup'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
@@ -107,7 +108,7 @@ const validationSchema = Yup.object().shape({
     order_occasion: Yup.string().required('Please select an occasion!'),
 })
 
-const CreateDraftForm:React.FC<any> = ({onDialogClose}) => {
+const CreateDraftForm: React.FC<any> = ({ onDialogClose }) => {
     const navigate = useNavigate()
     const session = useSession()
     const [formError, setFormError] = useState<string | null>(null)
@@ -152,7 +153,6 @@ const CreateDraftForm:React.FC<any> = ({onDialogClose}) => {
                 if (accessToken) {
                     await createCalendarEvent(values, orderId, accessToken)
                     console.log('Calendar event created successfully')
-                    
                 }
             }
             onDialogClose(false)
@@ -218,23 +218,37 @@ const CreateDraftForm:React.FC<any> = ({onDialogClose}) => {
                             </FormItem>
 
                             <FormItem
-                                asterisk
-                                label="Order Time"
-                                invalid={
-                                    errors.order_time && touched.order_time
-                                }
-                                errorMessage={errors.order_time}
-                            >
-                                <TimePicker
-                                    onChange={(time) =>
-                                        setFieldValue('order_time', time)
-                                    }
-                                    value={values.order_time}
-                                    disableClock={true}
-                                    clearIcon={null}
-                                    className="w-full"
-                                />
-                            </FormItem>
+                                        asterisk
+                                        label="Order Time"
+                                        invalid={
+                                            errors.order_time &&
+                                            touched.order_time
+                                        }
+                                        errorMessage={errors.order_time}
+                                    >
+                                        <Flatpickr
+                                            options={{
+                                                enableTime: true,
+                                                noCalendar: true,
+                                                dateFormat: 'h:i K',
+                                                static: true,
+                                                time_24hr: false,
+                                            }}
+                                            value={
+                                                values.order_time ||
+                                                dayjs().format('HH:mm')
+                                            }
+                                            onChange={(time: any) =>
+                                                setFieldValue(
+                                                    'order_time',
+                                                    dayjs(time[0]).format(
+                                                        'HH:mm'
+                                                    )
+                                                )
+                                            }
+                                            className="w-[470px] h-11 px-5 font-semibold text-base tracking-widest rounded-md border border-gray-300"
+                                        />
+                                    </FormItem>
 
                             <FormItem
                                 asterisk

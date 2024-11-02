@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf'
-import { Skeleton } from '@/components/ui'
+import { Card, Skeleton } from '@/components/ui'
 import { useState } from 'react'
 
 const NameTag: React.FC<any> = ({ data, loading }) => {
@@ -31,7 +31,7 @@ const NameTag: React.FC<any> = ({ data, loading }) => {
             }
 
             // Draw item background
-            doc.setFillColor(200, 200, 200) // Set background color to light gray
+            doc.setFillColor(227, 234, 255) // Set background color to light gray
             doc.rect(x, y, itemWidth, itemHeight, 'F') // Draw the background rectangle
 
             // Calculate maximum font size that fits within the item dimensions
@@ -111,149 +111,194 @@ const NameTag: React.FC<any> = ({ data, loading }) => {
 
     return (
         <div className=" bg-gray-100 flex items-center justify-center p-5 font-sans">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
-                    Menu
-                </h1>
-                {!loading ? (
-                    <ul className="mb-6">
-                        {data.map((item: any) => (
-                            <li
-                                key={item.id}
-                                className="text-lg mb-2 text-gray-700"
-                            >
-                                {item.food_item_data.item_name.toUpperCase()}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <div className="flex flex-col gap-4 my-3">
-                        <div className="flex items-center gap-4">
-                            <div>
-                                <Skeleton variant="circle" />
+            {data.length ? (
+                <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                    <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+                        Menu
+                    </h1>
+                    {!loading ? (
+                        <ul className="mb-6">
+                            {data.map((item: any) => (
+                                <li
+                                    key={item.id}
+                                    className="text-lg mb-2 text-gray-700"
+                                >
+                                    {item.food_item_data.item_name.toUpperCase()}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <div className="flex flex-col gap-4 my-3">
+                            <div className="flex items-center gap-4">
+                                <div>
+                                    <Skeleton variant="circle" />
+                                </div>
+                                <Skeleton />
                             </div>
-                            <Skeleton />
+                            <div className="flex items-center gap-4">
+                                <div>
+                                    <Skeleton variant="circle" />
+                                </div>
+                                <Skeleton />
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div>
+                                    <Skeleton variant="circle" />
+                                </div>
+                                <Skeleton />
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div>
+                                    <Skeleton variant="circle" />
+                                </div>
+                                <Skeleton />
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div>
+                                    <Skeleton variant="circle" />
+                                </div>
+                                <Skeleton />
+                            </div>
                         </div>
-                        <div className="flex items-center gap-4">
-                            <div>
-                                <Skeleton variant="circle" />
-                            </div>
-                            <Skeleton />
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <div>
-                                <Skeleton variant="circle" />
-                            </div>
-                            <Skeleton />
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <div>
-                                <Skeleton variant="circle" />
-                            </div>
-                            <Skeleton />
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <div>
-                                <Skeleton variant="circle" />
-                            </div>
-                            <Skeleton />
-                        </div>
-                    </div>
-                )}
-                <div className="mb-6">
-                    <label className="block text-gray-700 font-bold mb-2">
-                        Preset Sizes:
-                    </label>
-                    <div className="flex flex-col space-y-2">
-                        {presetSizes.map((size, index) => (
-                            <label key={index} className="flex items-center">
-                                <input
-                                    type="radio"
-                                    name="presetSize"
-                                    checked={
-                                        itemWidth === size.width &&
-                                        itemHeight === size.height
-                                    }
-                                    onChange={() =>
-                                        handlePresetSizeChange(index)
-                                    }
-                                    className="form-radio h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
-                                />
-                                <span className="ml-2 text-gray-700">
-                                    {size.label} ({size.width}mm x {size.height}
-                                    mm)
-                                </span>
-                            </label>
-                        ))}
-                    </div>
-                </div>
-                <div className="mb-6">
-                    <label className="text-gray-700 font-bold mb-2 flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={useCustomSize}
-                            onChange={() => setUseCustomSize(!useCustomSize)}
-                            className="mr-2 form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
-                        />
-                        Custom Size
-                    </label>
-                    {useCustomSize && (
-                        <>
-                            <div className="mb-6">
-                                <label className="block text-gray-700 font-bold mb-2">
-                                    Item Width (in mm):
-                                </label>
-                                <input
-                                    type="number"
-                                    value={itemWidth}
-                                    onChange={(e) =>
-                                        setItemWidth(parseInt(e.target.value))
-                                    }
-                                    min="10"
-                                    className="block w-full mt-1 bg-white border border-gray-300 rounded-lg py-2 px-3 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition ease-in-out duration-150"
-                                />
-                            </div>
-                            <div className="mb-6">
-                                <label className="block text-gray-700 font-bold mb-2">
-                                    Item Height (in mm):
-                                </label>
-                                <input
-                                    type="number"
-                                    value={itemHeight}
-                                    onChange={(e) =>
-                                        setItemHeight(parseInt(e.target.value))
-                                    }
-                                    min="10"
-                                    className="block w-full mt-1 bg-white border border-gray-300 rounded-lg py-2 px-3 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition ease-in-out duration-150"
-                                />
-                            </div>
-                            <div className="mb-6">
-                                <label className="block text-gray-700 font-bold mb-2">
-                                    Custom Font Size (in pt):
-                                </label>
-                                <input
-                                    type="number"
-                                    value={customFontSize}
-                                    onChange={(e) =>
-                                        setCustomFontSize(
-                                            parseInt(e.target.value)
-                                        )
-                                    }
-                                    min="10"
-                                    className="block w-full mt-1 bg-white border border-gray-300 rounded-lg py-2 px-3 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition ease-in-out duration-150"
-                                />
-                            </div>
-                        </>
                     )}
+                    <div className="mb-6">
+                        <label className="block text-gray-700 font-bold mb-2">
+                            Preset Sizes:
+                        </label>
+                        <div className="flex flex-col space-y-2 ">
+                            {presetSizes.map((size, index) => (
+                                <label
+                                    key={index}
+                                    className="flex items-center cursor-pointer"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="presetSize"
+                                        checked={
+                                            itemWidth === size.width &&
+                                            itemHeight === size.height
+                                        }
+                                        onChange={() =>
+                                            handlePresetSizeChange(index)
+                                        }
+                                        className="form-radio h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer"
+                                    />
+                                    <span className="ml-2 text-gray-700">
+                                        {size.label} ({size.width}mm x{' '}
+                                        {size.height}
+                                        mm)
+                                    </span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="mb-6">
+                        <label className="text-gray-700 font-bold mb-2 flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={useCustomSize}
+                                onChange={() =>
+                                    setUseCustomSize(!useCustomSize)
+                                }
+                                className="mr-2 form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer"
+                            />
+                            Custom Size
+                        </label>
+                        {useCustomSize && (
+                            <>
+                                <div className="mb-6">
+                                    <label className="block text-gray-700 font-bold mb-2">
+                                        Item Width (in mm):
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={itemWidth}
+                                        onChange={(e) =>
+                                            setItemWidth(
+                                                parseInt(e.target.value)
+                                            )
+                                        }
+                                        min="10"
+                                        className="block w-full mt-1 bg-white border border-gray-300 rounded-lg py-2 px-3 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition ease-in-out duration-150"
+                                    />
+                                </div>
+                                <div className="mb-6">
+                                    <label className="block text-gray-700 font-bold mb-2">
+                                        Item Height (in mm):
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={itemHeight}
+                                        onChange={(e) =>
+                                            setItemHeight(
+                                                parseInt(e.target.value)
+                                            )
+                                        }
+                                        min="10"
+                                        className="block w-full mt-1 bg-white border border-gray-300 rounded-lg py-2 px-3 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition ease-in-out duration-150"
+                                    />
+                                </div>
+                                <div className="mb-6">
+                                    <label className="block text-gray-700 font-bold mb-2">
+                                        Custom Font Size (in pt):
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={customFontSize}
+                                        onChange={(e) =>
+                                            setCustomFontSize(
+                                                parseInt(e.target.value)
+                                            )
+                                        }
+                                        min="10"
+                                        className="block w-full mt-1 bg-white border border-gray-300 rounded-lg py-2 px-3 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition ease-in-out duration-150"
+                                    />
+                                </div>
+                            </>
+                        )}
+                    </div>
+                    <button
+                        disabled={!data || data.length === 0}
+                        onClick={handlePrint}
+                        className="w-full bg-gradient-to-r from-green-400 to-green-600 text-white py-3 rounded-lg shadow-md hover:from-green-500 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition ease-in-out duration-150"
+                    >
+                        Print
+                    </button>
                 </div>
-                <button
-                    disabled={!data || data.length === 0}
-                    onClick={handlePrint}
-                    className="w-full bg-gradient-to-r from-green-400 to-green-600 text-white py-3 rounded-lg shadow-md hover:from-green-500 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition ease-in-out duration-150"
-                >
-                    Print
-                </button>
-            </div>
+            ) : (
+                <Card className="h-full py-48 w-full flex items-center justify-center bg-gray-50">
+                    <div className="text-center">
+                        <svg
+                            className="mx-auto h-16 w-16 text-red-500 mb-6"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M13 16h-1v-4h1m0 4h1v-4h-1m1-4h1m-1 0H12m-1 0H9m4 0H9m-2 0H7m-4 0h4v4H7V8M12 8h-1V4h1v4zm0 4h1m-1-4h1"
+                            />
+                        </svg>
+
+                        <h2 className="text-2xl font-semibold text-gray-700">
+                            Kindly select a menu to proceed further
+                        </h2>
+
+                        <p className="text-sm text-gray-500 mt-4">
+                            It seems you haven't chosen a menu. Please go back
+                            to the <b>order details</b> tab.
+                        </p>
+
+                        {/* <button className="mt-6 px-6 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition duration-300"
+                                >
+                                    Go Back to Menu
+                                </button> */}
+                    </div>
+                </Card>
+            )}
         </div>
     )
 }

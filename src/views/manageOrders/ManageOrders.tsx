@@ -12,6 +12,7 @@ const { TabNav, TabList, TabContent } = Tabs
 const ManageOrders = () => {
     const [response, setResponse] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(true)
+    const [tabChange, setTabChange] = useState<boolean>(true)
     const params = useParams<{ id: string }>()
 
     const fetchOrderData = async (orderId: string) => {
@@ -39,11 +40,14 @@ const ManageOrders = () => {
 
     useEffect(() => {
         if (params) fetchOrderData(params.id as string)
-    }, [params])
+    }, [params, tabChange])
 
     return (
         <div>
-            <Tabs defaultValue="tab1"   >
+            <Tabs
+                defaultValue="tab1"
+                onChange={() => setTabChange((prev) => !prev)}
+            >
                 <TabList>
                     <TabNav value="tab1">Order details</TabNav>
                     <TabNav value="tab2">Checklist</TabNav>

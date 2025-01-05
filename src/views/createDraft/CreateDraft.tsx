@@ -17,6 +17,10 @@ const CreateDraft = () => {
         setIsOpen(false)
     }
 
+    const screenWidth = window.innerWidth;
+console.log('Screen width:', screenWidth);
+
+
     return (
         <div>
             <Button variant="solid" size="sm" onClick={() => openDialog()}>
@@ -26,10 +30,10 @@ const CreateDraft = () => {
                 isOpen={dialogIsOpen}
                 onClose={onDialogClose}
                 onRequestClose={onDialogClose}
-                width={900}
+                width={screenWidth}
             >
                 <div className="flex flex-col h-full justify-between">
-                    <h5 className="mb-4">Register order</h5>
+                    <h5 className="mb-4">Schedule order</h5>
                     <CreateDraftForm onDialogClose={onDialogClose}/>
                 </div>
             </Dialog>

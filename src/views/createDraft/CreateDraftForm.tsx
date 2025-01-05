@@ -88,7 +88,12 @@ const createCalendarEvent = async (
 const occasionOptions: Option[] = [
     { value: 'birthday', label: 'Birthday' },
     { value: 'wedding', label: 'Wedding' },
-    { value: 'meeting', label: 'Meeting' },
+    { value: 'co-operate', label: 'Co-operate' },
+    { value: 'fulan', label: 'Fulan' },
+    { value: 'retirement', label: 'Retirement' },
+    { value: 'baby-shower', label: 'Baby shower' },
+    { value: 'anniversary', label: 'Aniversary' },
+    { value: 'other', label: 'Other' },
 ]
 
 const validationSchema = Yup.object().shape({
@@ -104,8 +109,13 @@ const validationSchema = Yup.object().shape({
         .required('Please input the client name!'),
     people_count: Yup.number()
         .min(1, 'At least one person required!')
+        .max(2000, 'People cant be more than 2000')
         .required('Please input the number of people!'),
     order_occasion: Yup.string().required('Please select an occasion!'),
+    client_contact: Yup.string()
+        .required('Please add contact number')
+        .min(10, 'Too Short!')
+        .max(10, 'Too Long!'),
 })
 
 const CreateDraftForm: React.FC<any> = ({ onDialogClose }) => {
@@ -137,8 +147,10 @@ const CreateDraftForm: React.FC<any> = ({ onDialogClose }) => {
                         order_time: values.order_time,
                         order_location: values.order_location,
                         client_name: values.client_name,
+                        client_contact: values.client_contact,
                         people_count: values.people_count,
                         order_occasion: values.order_occasion,
+                        other_occasion: values.other_occasion,
                         order_status: 'D',
                     },
                 ])
@@ -181,6 +193,8 @@ const CreateDraftForm: React.FC<any> = ({ onDialogClose }) => {
                         client_name: '',
                         people_count: 1,
                         order_occasion: '',
+                        client_contact: '',
+                        other_occasion: '',
                     } as FormModel
                 }
                 validationSchema={validationSchema}
@@ -188,67 +202,71 @@ const CreateDraftForm: React.FC<any> = ({ onDialogClose }) => {
             >
                 {({ values, touched, errors, resetForm, setFieldValue }) => (
                     <Form>
+                        <div className='overflow-y-auto'>
                         <div className="space-y-6">
-                            <FormItem
-                                asterisk
-                                label="Order Date"
-                                invalid={
-                                    errors.order_date && touched.order_date
-                                }
-                                errorMessage={errors.order_date}
-                            >
-                                <Field name="order_date">
-                                    {({
-                                        field,
-                                        form,
-                                    }: FieldProps<Date | null>) => (
-                                        <DatePicker
-                                            field={field}
-                                            form={form}
-                                            value={values.order_date}
-                                            onChange={(date) =>
-                                                form.setFieldValue(
-                                                    field.name,
-                                                    date
-                                                )
-                                            }
-                                        />
-                                    )}
-                                </Field>
-                            </FormItem>
-
-                            <FormItem
-                                        asterisk
-                                        label="Order Time"
-                                        invalid={
-                                            errors.order_time &&
-                                            touched.order_time
-                                        }
-                                        errorMessage={errors.order_time}
-                                    >
-                                        <Flatpickr
-                                            options={{
-                                                enableTime: true,
-                                                noCalendar: true,
-                                                dateFormat: 'h:i K',
-                                                static: true,
-                                                time_24hr: false,
-                                            }}
-                                            value={
-                                                values.order_time ||
-                                                dayjs().format('HH:mm')
-                                            }
-                                            onChange={(time: any) =>
-                                                setFieldValue(
-                                                    'order_time',
-                                                    dayjs(time[0]).format(
-                                                        'HH:mm'
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormItem
+                                    asterisk
+                                    label="Order Date"
+                                    invalid={
+                                        touched.order_date && !values.order_date
+                                    }
+                                    errorMessage={
+                                        touched.order_date && !values.order_date
+                                            ? 'Date Required!'
+                                            : ''
+                                    }
+                                >
+                                    <Field name="order_date">
+                                        {({
+                                            field,
+                                            form,
+                                        }: FieldProps<Date | null>) => (
+                                            <DatePicker
+                                                {...field}
+                                                value={values.order_date}
+                                                minDate={new Date()}
+                                                onChange={(date) =>
+                                                    form.setFieldValue(
+                                                        'order_date',
+                                                        date
                                                     )
-                                                )
-                                            }
-                                            className="w-[470px] h-11 px-5 font-semibold text-base tracking-widest rounded-md border border-gray-300"
-                                        />
-                                    </FormItem>
+                                                }
+                                            />
+                                        )}
+                                    </Field>
+                                </FormItem>
+
+                                <FormItem
+                                    asterisk
+                                    label="Order Time"
+                                    invalid={
+                                        errors.order_time && touched.order_time
+                                    }
+                                    errorMessage={errors.order_time}
+                                >
+                                    <Flatpickr
+                                        options={{
+                                            enableTime: true,
+                                            noCalendar: true,
+                                            dateFormat: 'h:i K',
+                                            static: true,
+                                            time_24hr: false,
+                                        }}
+                                        value={
+                                            values.order_time ||
+                                            dayjs().format('HH:mm')
+                                        }
+                                        onChange={(time: any) =>
+                                            setFieldValue(
+                                                'order_time',
+                                                dayjs(time[0]).format('HH:mm')
+                                            )
+                                        }
+                                        className="w-full h-11 px-5 font-semibold text-base tracking-widest rounded-md border border-gray-300"
+                                    />
+                                </FormItem>
+                            </div>
 
                             <FormItem
                                 asterisk
@@ -267,73 +285,114 @@ const CreateDraftForm: React.FC<any> = ({ onDialogClose }) => {
                                 />
                             </FormItem>
 
-                            <h2 className="text-xl font-semibold mb-4">
-                                Order Details
-                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormItem
+                                    asterisk
+                                    label="Client Name"
+                                    invalid={
+                                        errors.client_name &&
+                                        touched.client_name
+                                    }
+                                    errorMessage={errors.client_name}
+                                >
+                                    <Field
+                                        type="text"
+                                        name="client_name"
+                                        placeholder="Client Name"
+                                        component={Input}
+                                    />
+                                </FormItem>
+                                <FormItem
+                                    asterisk
+                                    label="Client contact"
+                                    invalid={
+                                        errors.client_contact &&
+                                        touched.client_contact
+                                    }
+                                    errorMessage={errors.client_contact}
+                                >
+                                    <Field
+                                        type="number"
+                                        name="client_contact"
+                                        placeholder="Client contact"
+                                        component={Input}
+                                    />
+                                </FormItem>
+                            </div>
 
-                            <FormItem
-                                asterisk
-                                label="Client Name"
-                                invalid={
-                                    errors.client_name && touched.client_name
-                                }
-                                errorMessage={errors.client_name}
-                            >
-                                <Field
-                                    type="text"
-                                    name="client_name"
-                                    placeholder="Client Name"
-                                    component={Input}
-                                />
-                            </FormItem>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormItem
+                                    asterisk
+                                    label="Number of People"
+                                    invalid={
+                                        errors.people_count &&
+                                        touched.people_count
+                                    }
+                                    errorMessage={errors.people_count}
+                                >
+                                    <Field
+                                        type="number"
+                                        name="people_count"
+                                        placeholder="Number of People"
+                                        component={Input}
+                                    />
+                                </FormItem>
 
-                            <FormItem
-                                asterisk
-                                label="Number of People"
-                                invalid={
-                                    errors.people_count && touched.people_count
-                                }
-                                errorMessage={errors.people_count}
-                            >
-                                <Field
-                                    type="number"
-                                    name="people_count"
-                                    placeholder="Number of People"
-                                    component={Input}
-                                />
-                            </FormItem>
+                                <FormItem
+                                    asterisk
+                                    label="Occasion"
+                                    invalid={
+                                        errors.order_occasion &&
+                                        touched.order_occasion
+                                    }
+                                    errorMessage={errors.order_occasion}
+                                >
+                                    <Field name="order_occasion">
+                                        {({
+                                            field,
+                                            form,
+                                        }: FieldProps<string>) => (
+                                            <Select
+                                                field={field}
+                                                form={form}
+                                                options={occasionOptions}
+                                                value={occasionOptions.find(
+                                                    (option) =>
+                                                        option.value ===
+                                                        values.order_occasion
+                                                )}
+                                                onChange={(option) =>
+                                                    form.setFieldValue(
+                                                        field.name,
+                                                        option?.value
+                                                    )
+                                                }
+                                            />
+                                        )}
+                                    </Field>
+                                </FormItem>
 
-                            <FormItem
-                                asterisk
-                                label="Occasion"
-                                invalid={
-                                    errors.order_occasion &&
-                                    touched.order_occasion
-                                }
-                                errorMessage={errors.order_occasion}
-                            >
-                                <Field name="order_occasion">
-                                    {({ field, form }: FieldProps<string>) => (
-                                        <Select
-                                            field={field}
-                                            form={form}
-                                            options={occasionOptions}
-                                            value={occasionOptions.find(
-                                                (option) =>
-                                                    option.value ===
-                                                    values.order_occasion
-                                            )}
-                                            onChange={(option) =>
-                                                form.setFieldValue(
-                                                    field.name,
-                                                    option?.value
-                                                )
-                                            }
+                                {values.order_occasion === 'other' && (
+                                    <FormItem
+                                        asterisk
+                                        label="Other Occasion"
+                                        invalid={
+                                            errors.other_occasion &&
+                                            touched.other_occasion
+                                        }
+                                        errorMessage={errors.other_occasion}
+                                    >
+                                        <Field
+                                            type="text"
+                                            name="other_occasion"
+                                            placeholder="Specify Other Occasion"
+                                            component={Input}
                                         />
-                                    )}
-                                </Field>
-                            </FormItem>
+                                    </FormItem>
+                                )}
+                            </div>
                         </div>
+
                         <div className="flex justify-end mt-8">
                             <Button
                                 type="reset"
@@ -349,6 +408,7 @@ const CreateDraftForm: React.FC<any> = ({ onDialogClose }) => {
                             >
                                 Submit Order
                             </Button>
+                        </div>
                         </div>
                     </Form>
                 )}

@@ -27,7 +27,9 @@ export type FormModel = {
     order_location: string;
     client_name: string;
     people_count: number;
+    client_contact: string;
     order_occasion: string;
+    other_occasion: string;
 };
 
 export type CreateDraftType = {

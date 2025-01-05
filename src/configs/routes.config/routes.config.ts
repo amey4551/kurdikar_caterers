@@ -35,4 +35,10 @@ export const protectedRoutes = [
         component: lazy(() => import('@/views/events/Events')),
         authority: [],
     },
+    {
+        key: 'addFoodItemNew',
+        path: '/add_food_item',
+        component: lazy(() => import('@/views/AddFoodItemNew/AddFoodItemNew')),
+        authority: [],
+    },
 ]

@@ -26,6 +26,16 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [],
     },
+    {
+        key: 'newItem',
+        path: '/add_food_item',
+        title: 'Add new item',
+        translateKey: 'addFoodItem',
+        icon: 'singleMenu',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
    
 ]
 

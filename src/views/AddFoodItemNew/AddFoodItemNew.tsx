@@ -282,6 +282,8 @@ const foodCategoriesOptions = [
 const FoodItemForm: React.FC = () => {
     const [cutleryDialogOpen, setCutleryDialogOpen] = useState(false)
     const [spoonDialogOpen, setSpoonDialogOpen] = useState(false)
+    const [previewImage, setPreviewImage] = useState<string | null>(null)
+    const [uploading, setUploading] = useState(false)
 
     const validationSchema = Yup.object().shape({
         item_name: Yup.string()
@@ -296,6 +298,7 @@ const FoodItemForm: React.FC = () => {
         food_categories: Yup.string().required(
             'Please select food categories type'
         ),
+        image_url: Yup.string().required('Please upload an image'),
     })
 
     const submitForm = async (
@@ -323,6 +326,38 @@ const FoodItemForm: React.FC = () => {
             )
         } finally {
             setSubmitting(false)
+        }
+    }
+
+    const handleImageUpload = async (
+        file: File,
+        setFieldValue: (field: string, value: any) => void
+    ) => {
+        setUploading(true)
+        try {
+            const fileName = `${Date.now()}-${file.name}`
+            const { data, error } = await supabase.storage
+                .from('food-item-images')
+                .upload(fileName, file)
+
+            if (error) throw error
+
+            const publicUrl = supabase.storage
+                .from('food-item-images')
+                .getPublicUrl(data.path).data.publicUrl
+
+            setFieldValue('image_url', publicUrl)
+            setPreviewImage(publicUrl)
+        } catch (error) {
+            toast.push(
+                <Notification title="Error" type="danger">
+                    {error instanceof Error
+                        ? error.message
+                        : 'Image upload failed'}
+                </Notification>
+            )
+        } finally {
+            setUploading(false)
         }
     }
 
@@ -444,7 +479,8 @@ const FoodItemForm: React.FC = () => {
                             label="Food categories"
                             asterisk
                             invalid={
-                                errors.food_categories && touched.food_categories
+                                errors.food_categories &&
+                                touched.food_categories
                             }
                             errorMessage={errors.food_categories}
                         >
@@ -456,6 +492,36 @@ const FoodItemForm: React.FC = () => {
                                 options={foodCategoriesOptions}
                                 placeholder="Select serving spoon type"
                             />
+                        </FormItem>
+
+                        <FormItem
+                            asterisk
+                            label="Food Item Image"
+                            invalid={errors.image_url && touched.image_url}
+                            errorMessage={errors.image_url}
+                        >
+                            <div className="space-y-2">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0]
+                                        if (file) {
+                                            handleImageUpload(
+                                                file,
+                                                setFieldValue
+                                            )
+                                        }
+                                    }}
+                                />
+                                {previewImage && (
+                                    <img
+                                        src={previewImage}
+                                        alt="Preview"
+                                        className="w-32 h-32 object-cover rounded-md"
+                                    />
+                                )}
+                            </div>
                         </FormItem>
 
                         <div className="flex justify-end space-x-4 pt-6">
@@ -492,8 +558,6 @@ const FoodItemForm: React.FC = () => {
                                 setFieldValue('serving_spoon', value)
                             }
                         />
-
-                        
                     </Form>
                 )}
             </Formik>

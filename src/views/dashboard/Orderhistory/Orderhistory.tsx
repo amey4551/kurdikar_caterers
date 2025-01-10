@@ -63,61 +63,58 @@ const OrderHistory: React.FC = () => {
   };
 
   return (
-    <Card className="bg-white rounded-lg overflow-hidden">
-      <div className="px-6 py-4">
-        <h2 className="text-2xl font-bold text-black">Order History</h2>
+    <Card className="bg-white w-full">
+      <div className="px-4 py-3">
+        <h2 className="text-xl font-bold text-black">Order History</h2>
       </div>
-      <div className="p-6">
+      <div className="p-3">
         {loading ? (
           <TableRowSkeleton
-          avatarInColumns={[0]}
-          columns={5}
-          rows={5}
-          avatarProps={{
+            avatarInColumns={[0]}
+            columns={5}
+            rows={5}
+            avatarProps={{
               width: 1850,
-              height: 80,
-          }}
-      />
+              height: 60,
+            }}
+          />
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+              <table className="w-full divide-y divide-gray-200 text-sm">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-8 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Client</th>
-                    <th scope="col" className="px-8 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Date & Time</th>
-                    <th scope="col" className="px-8 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Location</th>
-                    <th scope="col" className="px-8 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">People</th>
-                    <th scope="col" className="px-8 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                    <th scope="col" className="px-3 py-2 text-left font-semibold text-gray-600 uppercase tracking-wider">Client & Event</th>
+                    <th scope="col" className="px-3 py-2 text-left font-semibold text-gray-600 uppercase tracking-wider">Schedule</th>
+                    <th scope="col" className="px-3 py-2 text-left font-semibold text-gray-600 uppercase tracking-wider">Details</th>
+                    <th scope="col" className="px-3 py-2 text-left font-semibold text-gray-600 uppercase tracking-wider">Status</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {orders.slice(0, visibleOrders).map((order) => (
-                    <tr key={order.id} onClick={() => handleEventClick(order.id)} className="hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                      <td className="px-8 py-5 whitespace-nowrap">
-                        <div className="text-lg font-semibold text-gray-900">{order.client_name}</div>
-                        <div className="text-md text-gray-500">{order.order_occasion}</div>
+                    <tr key={order.id} onClick={() => handleEventClick(order.id)} className="hover:bg-gray-50 cursor-pointer">
+                      <td className="px-3 py-3">
+                        <div className="font-medium text-gray-900">{order.client_name}</div>
+                        <div className="text-sm text-gray-500">{order.order_occasion}</div>
                       </td>
-                      <td className="px-8 py-5 whitespace-nowrap">
-                        <div className="text-lg text-gray-900 flex items-center">
-                          <CalendarClock className="w-6 h-6 mr-3 text-indigo-500" />
-                          {dayjs(`${order.order_date} ${order.order_time}`).format('D MMM YY, h:mm A')}
+                      <td className="px-3 py-3">
+                        <div className="flex items-center text-sm">
+                          <CalendarClock className="w-4 h-4 mr-2 text-indigo-500 flex-shrink-0" />
+                          <span>{dayjs(`${order.order_date} ${order.order_time}`).format('D MMM YY, h:mm A')}</span>
+                        </div>
+                        <div className="flex items-center text-sm mt-1">
+                          <MapPin className="w-4 h-4 mr-2 text-indigo-500 flex-shrink-0" />
+                          <span className="truncate max-w-[200px]">{order.order_location}</span>
                         </div>
                       </td>
-                      <td className="px-8 py-5 whitespace-nowrap">
-                        <div className="text-lg text-gray-900 flex items-center">
-                          <MapPin className="w-6 h-6 mr-3 text-indigo-500" />
-                          {order.order_location}
+                      <td className="px-3 py-3">
+                        <div className="flex items-center text-sm">
+                          <Users className="w-4 h-4 mr-2 text-indigo-500" />
+                          <span>{order.people_count} people</span>
                         </div>
                       </td>
-                      <td className="px-8 py-5 whitespace-nowrap">
-                        <div className="text-lg text-gray-900 flex items-center">
-                          <Users className="w-6 h-6 mr-3 text-indigo-500" />
-                          {order.people_count}
-                        </div>
-                      </td>
-                      <td className="px-8 py-5 whitespace-nowrap">
-                        <span className={`px-8 py-3 text-base font-medium rounded-full ${getStatusColor(order.order_status)}`}>
+                      <td className="px-3 py-3">
+                        <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(order.order_status)}`}>
                           {order.order_status || 'Unknown'}
                         </span>
                       </td>
@@ -127,12 +124,12 @@ const OrderHistory: React.FC = () => {
               </table>
             </div>
             {visibleOrders < orders.length && (
-              <div className="mt-8 text-center">
+              <div className="mt-4 text-center">
                 <button 
                   onClick={loadMoreOrders} 
-                  className="px-6 py-3 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition duration-300 ease-in-out flex items-center justify-center mx-auto"
+                  className="px-4 py-2 bg-indigo-500 text-white text-sm rounded hover:bg-indigo-600 transition duration-300 flex items-center justify-center mx-auto"
                 >
-                  <ChevronDown className="w-6 h-6 mr-2" />
+                  <ChevronDown className="w-4 h-4 mr-1" />
                   Load More
                 </button>
               </div>

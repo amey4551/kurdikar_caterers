@@ -21,6 +21,7 @@ interface FoodItemForm {
     cutlery_type: string
     serving_spoon: string
     food_categories: string
+    image_url: string
 }
 
 // Custom Toggle Component for Veg/Non-veg
@@ -373,6 +374,7 @@ const FoodItemForm: React.FC = () => {
                     cutlery_type: '',
                     serving_spoon: '',
                     food_categories: '',
+                    image_url: '',
                 }}
                 validationSchema={validationSchema}
                 onSubmit={submitForm}

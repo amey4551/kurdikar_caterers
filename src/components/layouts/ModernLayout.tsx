@@ -6,8 +6,8 @@ import SideNav from '@/components/template/SideNav'
 import View from '@/views'
 import Search from '../template/Search'
 import { useTranslation } from 'react-i18next'
-import { useEffect, useState } from 'react'
 import CreateDraft from '@/views/createDraft/CreateDraft'
+import { useLocation } from 'react-router-dom'
 
 const HeaderActionsStart = () => {
     return (
@@ -21,9 +21,11 @@ const HeaderActionsStart = () => {
 
 const HeaderActionsEnd = () => {
     const { t } = useTranslation('dashboard')
+    const {pathname} = useLocation()
+    
     return (
         <>
-            <CreateDraft />
+           {pathname === '/dashboard' && <CreateDraft />}
             <UserDropdown hoverable={false} />
         </>
     )
